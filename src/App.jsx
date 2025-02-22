@@ -866,7 +866,7 @@ function Valorant(){
 
 function Span(){
   useEffect(()=>{
-    let container, stats, gui, guiStatsEl;
+    let container, gui, guiStatsEl;
 		let camera, controls, scene, renderer, material;
 
 		// gui
@@ -879,13 +879,14 @@ function Span(){
 
 		const api = {
 			method: Method.INSTANCED,
-			count: 1000
+			count: 50
 		};
 
 		//
 
 		init();
-		initMesh();
+		//initMesh();
+    initMeshFBX();
 
 		//
 
@@ -932,6 +933,60 @@ function Span(){
 			};
 
 		}();
+
+    function initMeshFBX() {
+      clean();
+
+      // Cargar el archivo FBX
+      const loader = new FBXLoader();
+      loader.load('./Silla.fbx', function (object) { // Cambia la ruta a tu archivo .fbx
+          // El objeto cargado puede ser un Group o Mesh, dependiendo del FBX
+          let geometry;
+          let mesh;
+
+          // Si el FBX contiene un solo Mesh, lo tomamos directamente
+          if (object.isMesh) {
+              mesh = object;
+              geometry = mesh.geometry;
+          } else {
+              // Si es un Group, buscamos el primer Mesh dentro
+              mesh = object.children.find(child => child.isMesh);
+              if (mesh) {
+                  geometry = mesh.geometry;
+              } else {
+                  console.error('No se encontró un Mesh en el archivo FBX');
+                  return;
+              }
+          }
+
+          // Material por defecto si no viene en el FBX o quieres sobrescribirlo
+          material = new THREE.MeshNormalMaterial();
+          mesh.material = material;
+
+          // Asegurarse de que las normales estén calculadas
+          geometry.computeVertexNormals();
+
+          console.time(api.method + ' (build)');
+
+          console.log(geometry)
+
+          switch (api.method) {
+              case Method.INSTANCED:
+                  makeInstanced(geometry);
+                  break;
+              case Method.MERGED:
+                  makeMerged(geometry);
+                  break;
+              case Method.NAIVE:
+                  makeNaive(geometry);
+                  break;
+          }
+
+          console.timeEnd(api.method + ' (build)');
+      }, undefined, function (error) {
+          console.error('Error al cargar el archivo FBX:', error);
+      });
+    }
 
 		function initMesh() {
 
@@ -981,6 +1036,7 @@ function Span(){
 
 			}
 
+      console.log(mesh)
 			scene.add( mesh );
 
 			//
@@ -1087,8 +1143,8 @@ function Span(){
 			// gui
 
 			gui = new GUI();
-			gui.add( api, 'method', Method ).onChange( initMesh );
-			gui.add( api, 'count', 1, 10000 ).step( 1 ).onChange( initMesh );
+			gui.add( api, 'method', Method ).onChange( initMeshFBX );
+			gui.add( api, 'count', 1, 100 ).step( 1 ).onChange( initMeshFBX );
 
 			const perfFolder = gui.addFolder( 'Performance' );
 

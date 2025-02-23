@@ -1144,25 +1144,30 @@ function Span(){
 			controls = new OrbitControls( camera, renderer.domElement );
 
       let touchStartY = 0;
+      let touchStartX = 0;
 
-      container.addEventListener("touchstart", (event) => {
+      document.addEventListener("touchstart", (event) => {
           touchStartY = event.touches[0].clientY;
+          touchStartX = event.touches[0].clientX;
       });
 
-      container.addEventListener("touchmove", (event) => {
+      document.addEventListener("touchmove", (event) => {
           let touchMoveY = event.touches[0].clientY;
-          let deltaY = Math.abs(touchMoveY - touchStartY);
+          let touchMoveX = event.touches[0].clientX;
 
-          if (deltaY > 10) {
-              // Si el usuario está deslizando verticalmente, deshabilitar los controles
+          let deltaY = Math.abs(touchMoveY - touchStartY);
+          let deltaX = Math.abs(touchMoveX - touchStartX);
+
+          if (deltaY > deltaX) {
+              // Si el desplazamiento es mayor en el eje Y (scroll vertical), deshabilitar OrbitControls
               controls.enabled = false;
           } else {
-              // Si el movimiento es más horizontal, permitir la interacción con el modelo
+              // Si el desplazamiento es mayor en el eje X, habilitar OrbitControls
               controls.enabled = true;
           }
       });
 
-      container.addEventListener("touchend", () => {
+      document.addEventListener("touchend", () => {
           controls.enabled = true;
       });
 
@@ -1172,17 +1177,17 @@ function Span(){
 
 			// gui
 
-			gui = new GUI();
-			gui.add( api, 'method', Method ).onChange( initMeshFBX );
-			gui.add( api, 'count', 1, 100 ).step( 1 ).onChange( initMeshFBX );
+			// gui = new GUI();
+			// gui.add( api, 'method', Method ).onChange( initMeshFBX );
+			// gui.add( api, 'count', 1, 100 ).step( 1 ).onChange( initMeshFBX );
 
-			const perfFolder = gui.addFolder( 'Performance' );
+			// const perfFolder = gui.addFolder( 'Performance' );
 
-			guiStatsEl = document.createElement( 'div' );
-			guiStatsEl.classList.add( 'gui-stats' );
+			// guiStatsEl = document.createElement( 'div' );
+			// guiStatsEl.classList.add( 'gui-stats' );
 
-			perfFolder.$children.appendChild( guiStatsEl );
-			perfFolder.open();
+			// perfFolder.$children.appendChild( guiStatsEl );
+			// perfFolder.open();
 
 			// listeners
 

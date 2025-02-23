@@ -1147,8 +1147,15 @@ function Span(){
       const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
       if (isMobile) {
-          controls.enabled = false; // Deshabilita OrbitControls en móviles
-          autoRotateCamera(); // Activa la rotación automática
+        controls.enabled = false; // Deshabilita OrbitControls en móviles
+        autoRotateCamera(); // Activa la rotación automática
+
+        // Permitir scroll en móviles sin que el canvas lo bloquee
+        renderer.domElement.style.touchAction = "none";
+        window.addEventListener("touchmove", (e) => {
+            e.stopPropagation(); // Evita que el canvas intercepte el scroll
+        }, { passive: true });
+
       } else {
           controls.enableDamping = true; // Mejora la suavidad en escritorio
           controls.autoRotate = true;
@@ -1178,6 +1185,7 @@ function Span(){
 
 		}
 
+    // Función para rotar la cámara automáticamente en móviles
     function autoRotateCamera() {
       function animate() {
           camera.rotation.y += 0.002; // Ajusta la velocidad de rotación

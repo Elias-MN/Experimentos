@@ -7,6 +7,9 @@ import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
+import Hero from "./components/Hero";
+import Footer from "./components/Footer";
+
 import Ammo from "./ammo";
 
 function CreateCubes(mountRef){
@@ -135,7 +138,7 @@ function CreateCubes(mountRef){
   }, []);
 }
 
-function SimcityBuilder(){
+function SimcityBuilder(mountRef){
 
   useEffect(() => {
   let camera, scene, renderer;
@@ -254,6 +257,7 @@ function SimcityBuilder(){
 
   function render() {
     renderer.render( scene, camera );
+    mountRef.current.appendChild(renderer.domElement);
   }
 
   }, []);
@@ -1139,6 +1143,8 @@ function Span(){
 
 			controls = new OrbitControls( camera, renderer.domElement );
 			controls.autoRotate = true;
+      controls.enableZoom = false;
+      controls.maxTargetRadius = 10;
 
 			// gui
 
@@ -1220,16 +1226,23 @@ function Span(){
 }
 
 export default function App() {
-  //const mountRef = useRef(null);
-  //CreateCubes(mountRef)
-  //return <div ref={mountRef} />;
-
-  //SimcityBuilder()
-
+  const mountRef = useRef(null);
+  CreateCubes(mountRef)
   Span()
-  return <div id="container"></div>
 
+  const mountRef2 = useRef(null);
+  SimcityBuilder(mountRef2)
   //Aula()
-
   //Valorant()
+
+  return (
+    <>
+      <Hero />
+      <div id="container"></div>
+      <Footer />
+      <div ref={mountRef} />
+      <Footer />
+      <div ref={mountRef2} />
+    </>
+  )
 }

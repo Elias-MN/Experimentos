@@ -1143,37 +1143,18 @@ function Span(){
 
 			controls = new OrbitControls( camera, renderer.domElement );
 
-      let touchStartY = 0;
-      let touchStartX = 0;
+      // Detectar si es móvil
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-      document.addEventListener("touchstart", (event) => {
-          touchStartY = event.touches[0].clientY;
-          touchStartX = event.touches[0].clientX;
-      });
-
-      document.addEventListener("touchmove", (event) => {
-          let touchMoveY = event.touches[0].clientY;
-          let touchMoveX = event.touches[0].clientX;
-
-          let deltaY = Math.abs(touchMoveY - touchStartY);
-          let deltaX = Math.abs(touchMoveX - touchStartX);
-
-          if (deltaY > deltaX) {
-              // Si el desplazamiento es mayor en el eje Y (scroll vertical), deshabilitar OrbitControls
-              controls.enabled = false;
-          } else {
-              // Si el desplazamiento es mayor en el eje X, habilitar OrbitControls
-              controls.enabled = true;
-          }
-      });
-
-      document.addEventListener("touchend", () => {
-          controls.enabled = true;
-      });
-
-			controls.autoRotate = true;
-      controls.enableZoom = false;
-      controls.maxTargetRadius = 10;
+      if (isMobile) {
+          controls.enabled = false; // Deshabilita OrbitControls en móviles
+          autoRotateCamera(); // Activa la rotación automática
+      } else {
+          controls.enableDamping = true; // Mejora la suavidad en escritorio
+          controls.autoRotate = true;
+          controls.enableZoom = false;
+          controls.maxTargetRadius = 10;
+      }
 
 			// gui
 
@@ -1196,6 +1177,14 @@ function Span(){
 			Object.assign( window, { scene } );
 
 		}
+
+    function autoRotateCamera() {
+      function animate() {
+          camera.rotation.y += 0.002; // Ajusta la velocidad de rotación
+          requestAnimationFrame(animate);
+      }
+      animate();
+    }
 
 		//
 

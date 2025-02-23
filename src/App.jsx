@@ -1137,16 +1137,45 @@ function Span(){
 			// controls
 			controls = new OrbitControls( camera, renderer.domElement );
 
-      // Detectar si es móvil
+      // Configuración común para ambos (PC y móvil)
+      controls.enableDamping = true; // Suaviza el movimiento
+      controls.dampingFactor = 0.05;
+      controls.autoRotate = true; // Rotación automática habilitada
+      controls.autoRotateSpeed = 2.0; // Ajusta la velocidad de rotación (opcional)
+      controls.enableZoom = false; // Deshabilitamos zoom para evitar interferencias
+
+      // Detectar si es móvil (se usa una libreria)
       if (isMobile) {
         console.log("mobile")
         controls.enabled = false;
+
+        const canvas = renderer.domElement;
+
+        // Manejo de eventos táctiles para permitir scroll
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (event) => {
+          touchStartY = event.touches[0].clientY;
+        });
+
+        canvas.addEventListener('touchmove', (event) => {
+          const touchCurrentY = event.touches[0].clientY;
+          const deltaY = touchCurrentY - touchStartY;
+
+          // Si el movimiento es pequeño, no hacemos nada (la rotación ya es automática)
+          if (Math.abs(deltaY) < 10) {
+            event.preventDefault(); // Evitamos interacción accidental con el canvas
+          }
+          // Movimientos mayores permiten el scroll natural
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+          touchStartY = 0;
+        });
       } else {
-        console.log("pc")
-        controls.enableDamping = true;
-        controls.autoRotate = true;
-        controls.enableZoom = false;
-        controls.maxTargetRadius = 10;
+        console.log("pc");
+        // En PC, también usamos rotación automática, pero permitimos interacción si deseas
+        controls.enabled = true; // Opcional: desactiva esto si solo quieres rotación automática
       }
 
 			// gui

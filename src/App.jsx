@@ -1142,6 +1142,12 @@ function Span(){
 			// controls
 
 			controls = new OrbitControls( camera, renderer.domElement );
+
+      // Detectar si es móvil y deshabilitar los controles
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        controls.enabled = false;
+      }
+
 			controls.autoRotate = true;
       controls.enableZoom = false;
       controls.maxTargetRadius = 10;
@@ -1226,12 +1232,12 @@ function Span(){
 }
 
 export default function App() {
-  const mountRef = useRef(null);
-  CreateCubes(mountRef)
+  //const mountRef = useRef(null);
+  //CreateCubes(mountRef)
   Span()
 
-  const mountRef2 = useRef(null);
-  SimcityBuilder(mountRef2)
+  //const mountRef2 = useRef(null);
+  //SimcityBuilder(mountRef2)
   //Aula()
   //Valorant()
 

@@ -6,11 +6,10 @@ import { ConvexObjectBreaker } from 'three/addons/misc/ConvexObjectBreaker.js';
 import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import {isMobile} from 'react-device-detect';
 
 import Hero from "./components/Hero";
 import Footer from "./components/Footer";
-
-import Ammo from "./ammo";
 
 function CreateCubes(mountRef){
 
@@ -1116,17 +1115,14 @@ function Span(){
 		}
 
 		function init() {
-
 			const width = window.innerWidth;
 			const height = window.innerHeight;
 
 			// camera
-
 			camera = new THREE.PerspectiveCamera( 70, width / height, 1, 100 );
 			camera.position.z = 30;
 
 			// renderer
-
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( width, height );
@@ -1135,32 +1131,22 @@ function Span(){
 			container.appendChild( renderer.domElement );
 
 			// scene
-
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color( 0xffffff );
 
 			// controls
-
 			controls = new OrbitControls( camera, renderer.domElement );
 
       // Detectar si es móvil
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
       if (isMobile) {
-        controls.enabled = false; // Deshabilita OrbitControls en móviles
-        autoRotateCamera(); // Activa la rotación automática
-
-        // Permitir scroll en móviles sin que el canvas lo bloquee
-        renderer.domElement.style.touchAction = "none";
-        window.addEventListener("touchmove", (e) => {
-            e.stopPropagation(); // Evita que el canvas intercepte el scroll
-        }, { passive: true });
-
+        console.log("mobile")
+        controls.enabled = false;
       } else {
-          controls.enableDamping = true; // Mejora la suavidad en escritorio
-          controls.autoRotate = true;
-          controls.enableZoom = false;
-          controls.maxTargetRadius = 10;
+        console.log("pc")
+        controls.enableDamping = true;
+        controls.autoRotate = true;
+        controls.enableZoom = false;
+        controls.maxTargetRadius = 10;
       }
 
 			// gui
@@ -1184,15 +1170,6 @@ function Span(){
 			Object.assign( window, { scene } );
 
 		}
-
-    // Función para rotar la cámara automáticamente en móviles
-    function autoRotateCamera() {
-      function animate() {
-          camera.rotation.y += 0.002; // Ajusta la velocidad de rotación
-          requestAnimationFrame(animate);
-      }
-      animate();
-    }
 
 		//
 

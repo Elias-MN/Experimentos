@@ -1143,10 +1143,28 @@ function Span(){
 
 			controls = new OrbitControls( camera, renderer.domElement );
 
-      // Detectar si es móvil y deshabilitar los controles
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        controls.enabled = false;
-      }
+      let touchStartY = 0;
+
+      container.addEventListener("touchstart", (event) => {
+          touchStartY = event.touches[0].clientY;
+      });
+
+      container.addEventListener("touchmove", (event) => {
+          let touchMoveY = event.touches[0].clientY;
+          let deltaY = Math.abs(touchMoveY - touchStartY);
+
+          if (deltaY > 10) {
+              // Si el usuario está deslizando verticalmente, deshabilitar los controles
+              controls.enabled = false;
+          } else {
+              // Si el movimiento es más horizontal, permitir la interacción con el modelo
+              controls.enabled = true;
+          }
+      });
+
+      container.addEventListener("touchend", () => {
+          controls.enabled = true;
+      });
 
 			controls.autoRotate = true;
       controls.enableZoom = false;

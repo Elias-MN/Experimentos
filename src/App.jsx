@@ -1240,9 +1240,9 @@ export default function App() {
       <Hero />
       <div id="container"></div>
       <Footer />
-      <div ref={mountRef} />
+      {/* <div ref={mountRef} />
       <Footer />
-      <div ref={mountRef2} />
+      <div ref={mountRef2} /> */}
     </>
   )
 }

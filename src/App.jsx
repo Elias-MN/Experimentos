@@ -1143,6 +1143,7 @@ function Span(){
       controls.autoRotate = true; // Rotación automática habilitada
       controls.autoRotateSpeed = 2.0; // Ajusta la velocidad de rotación (opcional)
       controls.enableZoom = false; // Deshabilitamos zoom para evitar interferencias
+      controls.maxTargetRadius = 10;
 
       // Detectar si es móvil (se usa una libreria)
       if (isMobile) {
@@ -1151,31 +1152,24 @@ function Span(){
 
         const canvas = renderer.domElement;
 
-        // Manejo de eventos táctiles para permitir scroll
-        let touchStartY = 0;
+        // Aseguramos que el canvas no bloquee el scroll por defecto
+        canvas.style.touchAction = 'auto'; // Permite el comportamiento táctil nativo
 
+        // Eliminamos preventDefault innecesario y dejamos que el scroll funcione
         canvas.addEventListener('touchstart', (event) => {
-          touchStartY = event.touches[0].clientY;
+          // No necesitamos hacer nada aquí, solo dejar que el evento se propague
         });
 
         canvas.addEventListener('touchmove', (event) => {
-          const touchCurrentY = event.touches[0].clientY;
-          const deltaY = touchCurrentY - touchStartY;
-
-          // Si el movimiento es pequeño, no hacemos nada (la rotación ya es automática)
-          if (Math.abs(deltaY) < 10) {
-            event.preventDefault(); // Evitamos interacción accidental con el canvas
-          }
-          // Movimientos mayores permiten el scroll natural
-        }, { passive: false });
+          // No llamamos a preventDefault, permitiendo que el scroll ocurra naturalmente
+        }, { passive: true }); // passive: true mejora el rendimiento del scroll
 
         canvas.addEventListener('touchend', () => {
-          touchStartY = 0;
+          // Nada que hacer aquí
         });
       } else {
         console.log("pc");
-        // En PC, también usamos rotación automática, pero permitimos interacción si deseas
-        controls.enabled = true; // Opcional: desactiva esto si solo quieres rotación automática
+        controls.enabled = true; // Opcional: desactiva si solo quieres rotación automática
       }
 
 			// gui
